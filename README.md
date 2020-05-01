@@ -6,8 +6,8 @@ I will be documenting my journey in building up an ActivityPub social network th
 The main reference will be the "[Guide for new ActivityPub implementers][4]", which is the most up to date official reference I am able to find. We will be testing our implementation by attempting to federate with one of the [Mastodon][5] instances, as the official test suite does not look like it will [not be coming back up any time soon][6].
 
 ## Plan
-
-- [ ] Webfinger support for discovering identities ([Reference][7])
+- [ ] Setup web framework ([Starlette][7])
+- [ ] Webfinger support for discovering identities ([Reference][8])
 - [ ] Follow user support
 - [ ] Publish test/image support
 
@@ -39,4 +39,5 @@ limitations under the License.
 [4]: https://socialhub.activitypub.rocks/t/guide-for-new-activitypub-implementers/479
 [5]: https://github.com/tootsuite/mastodon
 [6]: https://socialhub.activitypub.rocks/t/the-activitypub-test-suite/290
-[7]: https://blog.joinmastodon.org/2018/06/how-to-implement-a-basic-activitypub-server/
+[7]: https://www.starlette.io/
+[8]: https://blog.joinmastodon.org/2018/06/how-to-implement-a-basic-activitypub-server/
