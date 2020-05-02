@@ -32,8 +32,7 @@ async def webfinger(request):
                 }],
         }
 
-        headers = {'content-type': 'application/activity+json'}
-        return JSONResponse(resp, headers=headers)
+        return JSONResponse(resp)
 
 
 async def users(request):
