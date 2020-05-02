@@ -39,4 +39,9 @@ def encrypt_password(password):
 
 
 def compare_password(password, encrypted):
-    return bcrypt_check(password, encrypted.encode())
+    try:
+        bcrypt_check(password, encrypted.encode())
+    except ValueError:
+        return False
+    else:
+        return True

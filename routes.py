@@ -4,5 +4,6 @@ from starlette.routing import Route
 
 # URL Configuration
 routes = [
-    Route('/', views.users),
+    Route('/.well-known/webfinger', views.webfinger),
+    Route('/users/{username}', views.users),
 ]

@@ -1,15 +1,48 @@
 import pytest
 from app import app
+from settings import DATABASE_URL, ALLOWED_HOSTS
 
 from models.users import user_manager
+from models.crypto_utils import encrypt_password, compare_password
+
+
+def test_password():
+    pwd = '1234'
+    encrypted = encrypt_password(pwd)
+    assert compare_password(pwd, encrypted) is True
+
+    assert compare_password('12345', encrypted) is False
 
 
 @pytest.mark.asyncio
-async def test_users(client):
-    response = await client.get('/')
+async def test_webfinger(client):
+    url = '/.well-known/webfinger'
+    response = await client.get(url)
+    assert response.status_code == 400
+
+    domain = ALLOWED_HOSTS[0]
+    response = await client.get(url, query_string={
+        'resource': 'abc@' + 'abc' + domain})
+    assert response.status_code == 404
+
+    response = await client.get(url, query_string={
+        'resource': 'abc@' + domain})
     assert response.status_code == 404
 
     await user_manager.add_user('testuser', '1234')
 
-    response = await client.get('/', query_string={'username': 'testuser'})
+    response = await client.get(url, query_string={
+        'resource': 'testuser@'+domain})
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_users(client):
+    url = '/users/'
+    response = await client.get(url + 'testuser')
+    assert response.status_code == 404
+
+    await user_manager.add_user('testuser', '1234')
+
+    response = await client.get(url + 'testuser')
     assert response.status_code == 200

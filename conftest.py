@@ -1,6 +1,7 @@
 import pytest
 from starlette.config import environ
 from async_asgi_testclient import TestClient
+import sqlalchemy
 
 # This sets `os.environ`, but provides some additional protection.
 # If we placed it below the application import, it would raise an error
@@ -10,6 +11,16 @@ environ['DATABASE_TEST_URL'] = 'sqlite:///test.db'
 
 
 from app import app
+from settings import DATABASE_URL
+from models import metadata
+
+
+@pytest.fixture(autouse=True)
+def create_test_database():
+    engine = sqlalchemy.create_engine(DATABASE_URL)
+    metadata.create_all(engine)
+    yield
+    metadata.drop_all(engine)
 
 
 @pytest.fixture()
