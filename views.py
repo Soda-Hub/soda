@@ -9,6 +9,7 @@ async def webfinger(request):
         if not acct:
             return Response('', status_code=400)
 
+        acct = acct.replace('acct:', '')
         parts = acct.split('@')
         username = parts[0]
         domain = parts[1]
