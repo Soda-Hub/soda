@@ -1,4 +1,7 @@
 # Soda
+
+[![Build Status](https://travis-ci.org/Soda-Hub/soda.svg?branch=master)](https://travis-ci.org/Soda-Hub/soda)
+
 Soda: Let's build an open social network based on [ActivityPub][1].
 
 I will be documenting my journey in building up an ActivityPub social network that will be able to participate in the [Fediverse][2] networks on [my blog][3], and the code will be stored in this repository.
