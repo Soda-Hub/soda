@@ -6,7 +6,7 @@ I will be documenting my journey in building up an ActivityPub social network th
 The main reference will be the "[Guide for new ActivityPub implementers][4]", which is the most up to date official reference I am able to find. We will be testing our implementation by attempting to federate with one of the [Mastodon][5] instances, as the official test suite does not look like it will [not be coming back up any time soon][6].
 
 ## Plan
-- [ ] Setup web framework ([Starlette][7])
+- [x] Setup web framework ([Starlette][7])
 - [ ] Webfinger support for discovering identities ([Reference][8])
 - [ ] Follow user support
 - [ ] Publish test/image support

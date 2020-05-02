@@ -1,14 +1,16 @@
 from starlette.applications import Starlette
 from starlette.routing import Route
-from starlette.config import Config
-from views import home
+
+import settings
 
 
-config = Config('.env')
-DEBUG = config('DEBUG', cast=bool, default=False)
+# Database initialization
+import models
 
 
-app = Starlette(debug=DEBUG, routes=[
-    Route('/', home),
-])
+# Application views
+import routes
 
+
+# Initialise Starlette
+app = Starlette(debug=settings.DEBUG, routes=routes.routes)
