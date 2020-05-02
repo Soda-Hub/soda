@@ -10,7 +10,7 @@ The main reference will be the "[Guide for new ActivityPub implementers][4]", wh
 
 ## Plan
 - [x] Setup web framework ([Starlette][7])
-- [ ] Webfinger support for discovering identities ([Reference][8])
+- [x] Webfinger support for discovering identities ([Reference][8])
 - [ ] Follow user support
 - [ ] Publish test/image support
 

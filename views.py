@@ -52,11 +52,13 @@ async def users(request):
                 'https://w3id.org/security/v1'
             ],
             'id': url,
-            'type': 'Service',
+            'type': 'Person',
             'preferredUsername': user.username,
             'inbox': 'https://'+ domain + '/inbox',
             'followers': url + '/followers',
             'name': user.username,
+            'icon': {'mediaType': 'image/jpg', 'type': 'icon',
+                     'url': 'https://' + domain + '/static/images/profile_small.jpg'},
             'publicKey': {
                 'id': url + '#main-key',
                 'owner': url,
