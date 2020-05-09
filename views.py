@@ -54,8 +54,12 @@ async def users(request):
             'id': url,
             'type': 'Person',
             'preferredUsername': user.username,
-            'inbox': 'https://'+ domain + '/inbox',
+            'inbox': 'https://'+ domain + '/' + user.username + '/inbox',
+            'inbox': 'https://'+ domain + '/outbox',
             'followers': url + '/followers',
+            'endpoints': {
+                'sharedInbox': 'https://' + domain + '/inbox'
+            },
             'name': user.username,
             'icon': {'mediaType': 'image/jpg', 'type': 'icon',
                      'url': 'https://' + domain + '/static/images/profile_small.jpg'},
@@ -68,3 +72,17 @@ async def users(request):
 
         headers = {'content-type': 'application/activity+json'}
         return JSONResponse(resp, headers=headers)
+
+
+async def user_inbox(request):
+    print(request.path_params['username'])
+    print(request.json())
+
+
+async def user_outbox(request):
+    print(request.path_params['username'])
+    print(request.json())
+
+
+async def shared_inbox(request):
+    print(request.json())
