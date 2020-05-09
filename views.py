@@ -54,8 +54,8 @@ async def users(request):
             'id': url,
             'type': 'Person',
             'preferredUsername': user.username,
-            'inbox': 'https://'+ domain + '/' + user.username + '/inbox',
-            'inbox': 'https://'+ domain + '/outbox',
+            'inbox': 'https://'+ domain + '/users/' + user.username + '/inbox',
+            'outbox': 'https://'+ domain + '/users/' + user.username + '/outbox',
             'followers': url + '/followers',
             'endpoints': {
                 'sharedInbox': 'https://' + domain + '/inbox'
