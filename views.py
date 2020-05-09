@@ -1,4 +1,5 @@
 from starlette.responses import Response, UJSONResponse as JSONResponse
+from responses import ActivityJSONResponse
 from settings import ALLOWED_HOSTS
 from models.users import user_manager
 
@@ -70,19 +71,24 @@ async def users(request):
             }
         }
 
-        headers = {'content-type': 'application/activity+json'}
-        return JSONResponse(resp, headers=headers)
+        return ActivityJSONResponse(resp)
 
 
 async def user_inbox(request):
     print(request.path_params['username'])
-    print(request.json())
+    resp = await request.body()
+    print(resp.decode())
+    return Response('')
 
 
 async def user_outbox(request):
     print(request.path_params['username'])
-    print(request.json())
+    resp = await request.body()
+    print(resp.decode())
+    return Response('')
 
 
 async def shared_inbox(request):
-    print(request.json())
+    resp = await request.body()
+    print(resp.decode())
+    return Response('')
