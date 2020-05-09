@@ -46,3 +46,24 @@ async def test_users(client):
 
     response = await client.get(url + 'testuser')
     assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_user_inbox(client):
+    url = '/users/testuser/inbox'
+    response = await client.post(url, data={})
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_user_outbox(client):
+    url = '/users/testuser/outbox'
+    response = await client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_shared_inbox(client):
+    url = '/inbox'
+    response = await client.post(url, data={})
+    assert response.status_code == 200
