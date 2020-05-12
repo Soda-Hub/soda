@@ -1,6 +1,6 @@
 import pytest
 from app import app
-from settings import DATABASE_URL, ALLOWED_HOSTS
+from settings import ALLOWED_HOSTS
 
 from models.users import user_manager
 from models.crypto_utils import encrypt_password, compare_password

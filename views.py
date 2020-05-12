@@ -11,9 +11,7 @@ async def webfinger(request):
             return Response('', status_code=400)
 
         acct = acct.replace('acct:', '')
-        parts = acct.split('@')
-        username = parts[0]
-        domain = parts[1]
+        username, domain = acct.split('@')
 
         if domain not in ALLOWED_HOSTS:
             return Response('', status_code=404)
@@ -44,29 +42,29 @@ async def users(request):
         if user is None:
             return Response('', status_code=404)
 
-        domain = ALLOWED_HOSTS[0]
-        url = 'https://' + domain + '/users/'+ user.username
+        domain = 'https://' + ALLOWED_HOSTS[0]
+        user_url = domain + '/users/' + user.username
 
         resp = {
             '@context': [
                 'https://www.w3.org/ns/activitystreams',
                 'https://w3id.org/security/v1'
             ],
-            'id': url,
+            'id': user_url,
             'type': 'Person',
             'preferredUsername': user.username,
-            'inbox': 'https://'+ domain + '/users/' + user.username + '/inbox',
-            'outbox': 'https://'+ domain + '/users/' + user.username + '/outbox',
-            'followers': url + '/followers',
+            'inbox': user_url + '/inbox',
+            'outbox': user_url + '/outbox',
+            'followers': user_url + '/followers',
             'endpoints': {
-                'sharedInbox': 'https://' + domain + '/inbox'
+                'sharedInbox': domain + '/inbox'
             },
             'name': user.username,
             'icon': {'mediaType': 'image/jpg', 'type': 'icon',
-                     'url': 'https://' + domain + '/static/images/profile_small.jpg'},
+                     'url': domain + '/static/images/profile_small.jpg'},
             'publicKey': {
-                'id': url + '#main-key',
-                'owner': url,
+                'id': user_url + '#main-key',
+                'owner': user_url,
                 'publicKeyPem': user.pub_key
             }
         }
