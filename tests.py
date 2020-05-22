@@ -52,6 +52,14 @@ async def test_users(client):
 async def test_user_inbox(client):
     url = '/users/testuser/inbox'
     response = await client.post(url, data={})
+    assert response.status_code == 400
+
+    data = {'id': '123',
+            'type': 'Follow',
+            'actor': 'abc@cde.com',
+            'object': 'abc@def.com'}
+
+    response = await client.post(url, json=data)
     assert response.status_code == 200
 
 
