@@ -25,9 +25,7 @@ async def webfinger(request):
             return Response('', status_code=404)
 
         schema = WebFingerSchema()
-        resp = schema.dump({'subject': 'acct:' + acct,
-                            'links': 'https://' + ALLOWED_HOSTS[0] +
-                                     '/users/' + user.username})
+        resp = schema.dump(user)
 
         return JSONResponse(resp)
 
@@ -40,35 +38,8 @@ async def users(request):
         if user is None:
             return Response('', status_code=404)
 
-        domain = 'https://' + ALLOWED_HOSTS[0]
-        user_url = domain + '/users/' + user.username
-
-        media_schema = MediaSchema()
-        pk_schema = PublicKeySchema()
         user_schema = UserSchema()
-
-        icon = media_schema.dump({
-            'mediaType': 'image/jpg', 'type': 'icon',
-            'url': domain + '/static/images/profile_small.jpg'})
-
-        pk = pk_schema.dump({
-                'id': user_url + '#main-key',
-                'owner': user_url,
-                'publicKeyPem': user.pub_key})
-
-        resp = user_schema.dump({
-            'id': user_url,
-            'preferredUsername': user.username,
-            'inbox': user_url + '/inbox',
-            'outbox': user_url + '/outbox',
-            'followers': user_url + '/followers',
-            'endpoints': {
-                'sharedInbox': domain + '/inbox'
-            },
-            'name': user.username,
-            'icon': icon,
-            'publicKey': pk
-        })
+        resp = user_schema.dump(user)
 
         return ActivityJSONResponse(resp)
 
