@@ -7,5 +7,5 @@ prod:
 	gunicorn -w 4 -k uvicorn.workers.UvicornWorker --log-level debug app:app
 
 test:
-	pytest --cov . tests.py
+	pytest --cov-report term-missing --cov . tests.py
 	-rm test.db
