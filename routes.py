@@ -1,13 +1,13 @@
-import views
+from views import actpub, webfinger
 from starlette.routing import Route
 
 
 # URL Configuration
 routes = [
-    Route('/.well-known/webfinger', views.webfinger),
-    Route('/users/{username}/inbox', views.user_inbox, methods=['POST']),
-    Route('/users/{username}/outbox', views.user_outbox),
-    Route('/users/{username}', views.users),
-    Route('/inbox', views.shared_inbox, methods=['POST']),
-    Route('/outbox', views.shared_inbox),
+    Route('/.well-known/webfinger', webfinger.webfinger),
+    Route('/users/{username}/inbox', actpub.user_inbox, methods=['POST']),
+    Route('/users/{username}/outbox', actpub.user_outbox),
+    Route('/users/{username}', actpub.users),
+    Route('/inbox', actpub.shared_inbox, methods=['POST']),
+    Route('/outbox', actpub.shared_inbox),
 ]
