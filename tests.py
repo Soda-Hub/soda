@@ -1,3 +1,4 @@
+import json
 import pytest
 from app import app
 from settings import ALLOWED_HOSTS
@@ -63,6 +64,18 @@ async def test_user_inbox(client):
     assert response.status_code == 404
 
     await user_manager.add_user('testuser', '1234')
+
+    response = await client.post(url, json=data)
+    assert response.status_code == 200
+
+    data = {'id': '123',
+            'type': 'Undo',
+            'actor': 'abc@cde.com',
+            'object':
+                {'id': '123',
+                'type': 'Follow',
+                'actor': 'abc@cde.com',
+                'object': 'testuser@' + ALLOWED_HOSTS[0]}}
 
     response = await client.post(url, json=data)
     assert response.status_code == 200

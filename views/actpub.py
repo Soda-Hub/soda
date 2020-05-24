@@ -5,6 +5,7 @@ from settings import ALLOWED_HOSTS
 from models.users import user_manager, follow_manager
 from serializers.actpub.users import MediaSchema, PublicKeySchema, UserSchema
 from serializers.actpub.follows import FollowSchema
+from .activities import ActivityType, get_activity_type
 
 
 async def users(request):
@@ -34,15 +35,25 @@ async def user_inbox(request):
     if user is None:
         return Response('', status_code=404)
 
-    if req['type'] == 'Follow':
+    act_type = get_activity_type(req)
+
+    if act_type == ActivityType.FOLLOW:
         schema = FollowSchema()
         follow = schema.load(req)
         actor = req['actor']
         followee = req['object']
-
         remote_user = await user_manager.get_or_add_remote_user(actor)
-
         await follow_manager.add_following(remote_user.id, user.id)
+    elif act_type == ActivityType.UNDO:
+        act_type = get_activity_type(req['object'])
+        if act_type == ActivityType.FOLLOW:
+            schema = FollowSchema()
+            follow = schema.load(req['object'])
+            actor = req['object']['actor']
+            followee = req['object']['object']
+
+            remote_user = await user_manager.get_or_add_remote_user(actor)
+            await follow_manager.remove_following(remote_user.id, user.id)
 
     return Response('')
 

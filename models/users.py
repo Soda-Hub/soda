@@ -70,6 +70,13 @@ class FollowManager(object):
         )
         await database.execute(query)
 
+    async def remove_following(self, follower_id, followed_id):
+        query = follows.delete().where(
+            and_(follower_id==follower_id,
+                 followed_id==followed_id),
+        )
+        await database.execute(query)
+
 
 user_manager = UserManager()
 follow_manager = FollowManager()
