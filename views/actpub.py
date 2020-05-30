@@ -2,32 +2,10 @@ from json import JSONDecodeError
 from starlette.responses import Response, UJSONResponse as JSONResponse
 from responses import ActivityJSONResponse
 from settings import ALLOWED_HOSTS
-from models.users import user_manager
-from serializers.webfinger import WebFingerSchema
+from models.users import user_manager, follow_manager
 from serializers.actpub.users import MediaSchema, PublicKeySchema, UserSchema
-
-
-async def webfinger(request):
-    if request.method == 'GET':
-        acct = request.query_params.get('resource', None)
-        if not acct:
-            return Response('', status_code=400)
-
-        acct = acct.replace('acct:', '')
-        username, domain = acct.split('@')
-
-        if domain not in ALLOWED_HOSTS:
-            return Response('', status_code=404)
-
-        user = await user_manager.get_user(username)
-
-        if user is None:
-            return Response('', status_code=404)
-
-        schema = WebFingerSchema()
-        resp = schema.dump(user)
-
-        return JSONResponse(resp)
+from serializers.actpub.follows import FollowSchema
+from .activities import ActivityType, get_activity_type
 
 
 async def users(request):
@@ -46,7 +24,6 @@ async def users(request):
 
 async def user_inbox(request):
     # Handle Follow requests
-    # {"@context":"https://www.w3.org/ns/activitystreams","id":"https://mastodon.social/99a04493-0cdd-4912-8831-322f87fc0ec0","type":"Follow","actor":"https://mastodon.social/users/victorneo","object":"https://sodahub.cheshire.io/users/victor6"}
     username = request.path_params['username']
 
     try:
@@ -54,12 +31,29 @@ async def user_inbox(request):
     except JSONDecodeError:
         return Response('', status_code=400)
 
-    req_id = req['id']
-    req_type = req['type']
+    user = await user_manager.get_user(username)
+    if user is None:
+        return Response('', status_code=404)
 
-    if req_type == 'Follow':
+    act_type = get_activity_type(req)
+
+    if act_type == ActivityType.FOLLOW:
+        schema = FollowSchema()
+        follow = schema.load(req)
         actor = req['actor']
         followee = req['object']
+        remote_user = await user_manager.get_or_add_remote_user(actor)
+        await follow_manager.add_following(remote_user.id, user.id)
+    elif act_type == ActivityType.UNDO:
+        act_type = get_activity_type(req['object'])
+        if act_type == ActivityType.FOLLOW:
+            schema = FollowSchema()
+            follow = schema.load(req['object'])
+            actor = req['object']['actor']
+            followee = req['object']['object']
+
+            remote_user = await user_manager.get_or_add_remote_user(actor)
+            await follow_manager.remove_following(remote_user.id, user.id)
 
     return Response('')
 
