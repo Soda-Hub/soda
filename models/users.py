@@ -1,5 +1,6 @@
 import sqlalchemy
-from sqlalchemy.sql import and_
+from sqlalchemy.sql import and_, func
+from sqlalchemy import select
 from .crypto_utils import encrypt_password, generate_keypair
 from .meta import metadata, database
 
@@ -63,6 +64,11 @@ class UserManager(object):
 
 
 class FollowManager(object):
+    async def get_follower_count(self, user_id):
+        query = select([func.count(follows.c.followed_id==user_id)])
+        results = await database.fetch_one(query)
+        return results[0]
+
     async def add_following(self, follower_id, followed_id):
         query = follows.insert().values(
             follower_id=follower_id,

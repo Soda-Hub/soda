@@ -50,6 +50,18 @@ async def test_users(client):
 
 
 @pytest.mark.asyncio
+async def test_user_followers(client):
+    url = '/users/testuser/followers'
+    response = await client.get(url)
+    assert response.status_code == 404
+
+    await user_manager.add_user('testuser', '1234')
+
+    response = await client.get(url)
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
 async def test_user_inbox(client):
     url = '/users/testuser/inbox'
     response = await client.post(url, data={})

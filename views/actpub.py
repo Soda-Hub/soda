@@ -4,7 +4,7 @@ from responses import ActivityJSONResponse
 from settings import ALLOWED_HOSTS
 from models.users import user_manager, follow_manager
 from serializers.actpub.users import MediaSchema, PublicKeySchema, UserSchema
-from serializers.actpub.follows import FollowSchema
+from serializers.actpub.follows import FollowSchema, FollowerSummarySchema
 from .activities import ActivityType, get_activity_type
 
 
@@ -20,6 +20,28 @@ async def users(request):
         resp = user_schema.dump(user)
 
         return ActivityJSONResponse(resp)
+
+
+async def user_followers(request):
+    # Handle Follow requests
+    username = request.path_params['username']
+    page = request.query_params.get('page')
+    user = await user_manager.get_user(username)
+
+    if user is None:
+        return Response('', status_code=404)
+
+    if page is None:
+        follower_count = await follow_manager.get_follower_count(user.id)
+        schema = FollowerSummarySchema()
+        first = username + '/followers?page=1'
+        resp = schema.dump({'totalItems': follower_count, 'first': first})
+    elif page >= 1:
+        follower_count = await follow_manager.get_followers(user.id, page)
+        schema = FollowerSchema()
+        first = username + '/followers?page=1'
+
+    return ActivityJSONResponse(resp)
 
 
 async def user_inbox(request):
