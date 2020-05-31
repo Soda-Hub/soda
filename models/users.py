@@ -69,6 +69,15 @@ class FollowManager(object):
         results = await database.fetch_one(query)
         return results[0]
 
+    async def get_followers(self, user_id, page):
+        query = select([users.c.username]).where(
+                        and_(follows.c.followed_id==user_id,
+                             follows.c.follower_id==users.c.id))
+        count = 10
+        offset = (page - 1) * count
+        query = query.offset(offset).limit(count).order_by(follows.c.id)
+        return await database.fetch_all(query)
+
     async def add_following(self, follower_id, followed_id):
         query = follows.insert().values(
             follower_id=follower_id,

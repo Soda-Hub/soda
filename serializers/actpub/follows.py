@@ -37,4 +37,14 @@ class FollowerSummarySchema(Schema):
 # "partOf":"https://mastodon.social/users/victorneo/followers",
 # "orderedItems":["..."]}
 class FollowerSchema(Schema):
-    pass
+    context = fields.Str(default=AS_CONTEXT, data_key='@context')
+    id = fields.Method('get_id')
+    totalItems = fields.Int()
+    partOf = fields.Function(lambda obj: DOMAIN + obj['url'])
+    orderedItems = fields.Method('get_orderedItems')
+
+    def get_id(self, obj):
+        return DOMAIN + obj['url'] + '?page=' + str(obj['page'])
+
+    def get_orderedItems(self, obj):
+        return list(obj['followers'])
