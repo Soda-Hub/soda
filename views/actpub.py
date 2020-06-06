@@ -53,14 +53,17 @@ async def user_inbox(request):
     # Handle Follow requests
     username = request.path_params['username']
 
+    user = await user_manager.get_user(username)
+    if user is None:
+        return Response('', status_code=404)
+
+    if request.method == 'GET':
+        return Response('')
+
     try:
         req = await request.json()
     except JSONDecodeError:
         return Response('', status_code=400)
-
-    user = await user_manager.get_user(username)
-    if user is None:
-        return Response('', status_code=404)
 
     act_type = get_activity_type(req)
 

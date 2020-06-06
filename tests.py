@@ -82,17 +82,20 @@ async def test_user_followers(client):
 async def test_user_inbox(client):
     url = '/users/testuser/inbox'
     response = await client.post(url, data={})
+    assert response.status_code == 404
+
+    await user_manager.add_user('testuser', '1234')
+
+    response = await client.get(url)
+    assert response.status_code == 200
+
+    response = await client.post(url, data={})
     assert response.status_code == 400
 
     data = {'id': '123',
             'type': 'Follow',
             'actor': 'abc@cde.com',
             'object': 'testuser@' + ALLOWED_HOSTS[0]}
-
-    response = await client.post(url, json=data)
-    assert response.status_code == 404
-
-    await user_manager.add_user('testuser', '1234')
 
     response = await client.post(url, json=data)
     assert response.status_code == 200
