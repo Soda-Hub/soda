@@ -2,13 +2,12 @@ from settings import ALLOWED_HOSTS
 from marshmallow import Schema, fields
 
 
-
 class WebFingerSchema(Schema):
     subject = fields.Method('get_subject')
     links = fields.Method('get_links')
 
     def get_subject(self, obj):
-        return 'acct:' + obj.username
+        return 'acct:' + obj.username + '@' + ALLOWED_HOSTS[0]
 
     def get_links(self, obj):
         return [

@@ -3,7 +3,7 @@ import pytest
 from app import app
 from settings import ALLOWED_HOSTS
 
-from models.users import user_manager
+from models.users import user_manager, follow_manager
 from models.crypto_utils import encrypt_password, compare_password
 
 
@@ -47,6 +47,35 @@ async def test_users(client):
 
     response = await client.get(url + 'testuser')
     assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_user_followers(client):
+    url = '/users/testuser/followers'
+    response = await client.get(url)
+    assert response.status_code == 404
+
+    await user_manager.add_user('testuser', '1234')
+    await user_manager.add_user('testuser2', '1234')
+
+    user1 = await user_manager.get_user('testuser')
+    user2 = await user_manager.get_user('testuser2')
+
+    await follow_manager.add_following(user2.id, user1.id)
+
+    response = await client.get(url)
+    assert response.status_code == 200
+    assert response.json()['totalItems'] == 1
+
+    response = await client.get(url + '?page=1')
+    assert response.status_code == 200
+    assert response.json()['totalItems'] == 1
+    assert len(response.json()['orderedItems'])== 1
+
+    response = await client.get(url + '?page=2')
+    assert response.status_code == 200
+    assert response.json()['totalItems'] == 1
+    assert len(response.json()['orderedItems'])== 0
 
 
 @pytest.mark.asyncio
